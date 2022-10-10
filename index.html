@@ -28,10 +28,8 @@
 
     <script src="node_modules/qz-tray/qz-tray.js"></script>
     <script src="node_modules/html-to-image/dist/html-to-image.js"></script>
-    <script src="cptable.js"></script>
-    <script src="cputils.js"></script>
-    <script src="JSESCPOSBuilder.js"></script>
-    <!-- <script src="js/script.js"></script> -->
+
+    <script src="ESCPOS_Image.js"></script>
 
     <script>
         async function download() {
@@ -44,25 +42,13 @@
             document.body.appendChild(img);
         }
 
-        function dec_2_hex( num ) {
-            let hex = num.toString(16);
-
-            if(hex.length < 2)
-                hex = '0' + hex;
-
-            return eval('"\\x' + hex + '"');
-        }
 
         async function teste(){
             await qz.websocket.connect();
 
             let canvas = await gerar_canvas();
-            canvas = make_bw_buffer(canvas);
 
-            let command = (new Neodynamic.JSESCPOSBuilder.Document())
-                        .image(canvas)
-                        .generateArray()
-                        .map((d) => dec_2_hex(d) );
+            let command = (new ESCPOSImage(canvas)).make();
 
             imprimir(command);
         }
@@ -77,16 +63,6 @@
             qz.print(config, command);
         }
 
-        function gerar_img(){
-            let imprimir = document.getElementById('imprimir');
-
-            return htmlToImage.toPng(imprimir, {
-                quality: 0.10,
-                width: 484,
-                height: imprimir.clientHeight
-            });
-        }
-
         async function gerar_canvas(){
             let imprimir = document.getElementById('imprimir');
 
@@ -95,34 +71,6 @@
                 width: 484,
                 height: imprimir.clientHeight
             });
-
-            // let ctx = canvas.getContext("2d");
-
-            // ctx.width = canvas.width;
-            // ctx.height = canvas.height;
-
-            // return ctx;
-        }
-
-        function make_bw_buffer(canvas){
-            const threshold = 210;
-
-            let ctx = canvas.getContext("2d");
-
-            let idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < idata.data.length; i += 4) {
-                luma = idata.data[i] * 0.3 + idata.data[i + 1] * 0.59 + idata.data[i + 2] * 0.11;
-                luma = luma < threshold ? 0 : 255;
-
-                idata.data[i] = luma;
-                idata.data[i + 1] = luma;
-                idata.data[i + 2] = luma;
-            }
-
-            ctx.putImageData(idata, 0, 0);
-
-            return canvas;
         }
     </script>
 </body>
