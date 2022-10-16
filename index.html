@@ -20,7 +20,7 @@
         <strong>Hello</strong>
         <p>Hello world!</p>
 
-        <image src="hello_kitty.jpg" width="150" height="150"></image>
+        <!-- <image src="hello_kitty.jpg" width="150" height="150"></image> -->
     </div>
 
     <button onclick="teste()">Imprimir</button>
@@ -53,14 +53,15 @@
             imprimir(command);
         }
 
-        function imprimir(command){
-            var config = qz.configs.create("MP-4200 TH", {encoding: 'ISO-8859-1'});
+        var config = qz.configs.create("MP-4200 TH");
 
+        function imprimir(command){
             command.unshift('\x1B\x40');
             command.push('\x0A\x0A\x0A\x0A\x0A\x0A');
             command.push('\x1D\x56\x00');
 
-            qz.print(config, command);
+            console.log('command', command)
+            // qz.print(config, command);
         }
 
         async function gerar_canvas(){

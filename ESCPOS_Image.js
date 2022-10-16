@@ -22,7 +22,7 @@ class ESCPOSImage {
         let data = [];
 
         for (let i = 0; i < pixels.data.length; i += 4) {
-            luma = pixels.data[i] * 0.3 + pixels.data[i + 1] * 0.59 + pixels.data[i + 2] * 0.11;
+            let luma = pixels.data[i] * 0.3 + pixels.data[i + 1] * 0.59 + pixels.data[i + 2] * 0.11;
             luma = luma < threshold ? 1 : 0;
 
             data.push(luma);
@@ -32,7 +32,7 @@ class ESCPOSImage {
     }
 
     make() {  
-        const header = [0x1D, 0x76, 0x30, 0x00];
+        const header = ['\x1D', '\x76', '\x30', '\x00'];
         let raster = this.toRaster();
         return [ ...header, ...raster.width, ...raster.height, ...raster.data ];
     }
@@ -83,6 +83,6 @@ class ESCPOSImage {
         if(hex.length < 2)
             hex = '0' + hex;
 
-        return eval(`0x${hex}`);
+        return eval('"\\x' + hex + '"');
     }
 }
