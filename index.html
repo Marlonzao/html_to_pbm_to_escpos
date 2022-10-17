@@ -30,49 +30,7 @@
     <script src="node_modules/html-to-image/dist/html-to-image.js"></script>
 
     <script src="ESCPOS_Image.js"></script>
-
-    <script>
-        async function download() {
-            let canvas = await gerar_canvas();
-            canvas = make_bw_buffer(canvas);
-
-            let img = new Image();
-            img.src = canvas.toDataURL();
-
-            document.body.appendChild(img);
-        }
-
-
-        async function teste(){
-            await qz.websocket.connect();
-
-            let canvas = await gerar_canvas();
-
-            let command = (new ESCPOSImage(canvas)).make();
-
-            imprimir(command);
-        }
-
-        var config = qz.configs.create("MP-4200 TH");
-
-        function imprimir(command){
-            command.unshift('\x1B\x40');
-            command.push('\x0A\x0A\x0A\x0A\x0A\x0A');
-            command.push('\x1D\x56\x00');
-
-            qz.print(config, command);
-        }
-
-        async function gerar_canvas(){
-            let imprimir = document.getElementById('imprimir');
-
-            return await htmlToImage.toCanvas(imprimir, {
-                quality: 0.10,
-                width: 484,
-                height: imprimir.clientHeight
-            });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
